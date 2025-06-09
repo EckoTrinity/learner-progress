@@ -1,0 +1,111 @@
+Here’s a summary of all the steps you’ve performed so far for setting up your Laravel (PHP) project on Windows:
+
+    Installed PHP
+        Ran a PowerShell command as administrator to install PHP 8.4 using a script from php.new.
+
+    Enabled the Zip PHP Extension
+        Opened your php.ini file.
+        Uncommented (extension=zip) to enable the Zip extension.
+
+    Installed Composer Dependencies
+        Ran composer install in your project directory to install all PHP package dependencies.
+
+    Configured Environment File
+        Copied .env.example to .env.
+        Edited .env to set up configuration like database credentials.
+
+    Generated Application Key
+        Ran php artisan key:generate to create a unique application key for your Laravel app.
+
+    Ran Migrations and Seeders
+        Executed php artisan migrate --seed to set up and populate your database.
+
+    Started the Development Server
+        Used php artisan serve to launch the local development server for your Laravel application.
+
+Detailed Steps to Achieve the Learner Progress Page with Filtering and Sorting
+===============================================================================
+
+1. Created a new Blade view file:
+   - File: `resources/views/learner-progress.blade.php`
+   - Purpose: To display a table of learners, their enrolled courses, and progress using Bootstrap for styling.
+   - Added Blade comments at the top to document the variables used in the view.
+
+2. Created a new controller:
+   - File: `app/Http/Controllers/LearnerController.php`
+   - Created the `LearnerController` class.
+   - Added an `index(Request $request)` method to handle displaying the learner progress page.
+   - Added PHPDoc documentation to the method to describe its parameters and behavior.
+
+3. Defined a route for the page:
+   - File: `routes/web.php`
+   - Added: `Route::get('/learner-progress', [LearnerController::class, 'index']);`
+   - This route points to the `index` method in `LearnerController`.
+
+4. Set up Eloquent relationships:
+   - In `app/Models/Learner.php`:
+     - Added the `enrolments()` method to define a one-to-many relationship with the `Enrolment` model.
+     - Documented the method with PHPDoc.
+   - In `app/Models/Enrolment.php`:
+     - Added the `course()` method to define a belongs-to relationship with the `Course` model.
+     - Documented the method with PHPDoc.
+
+5. Updated the controller logic for data loading, filtering, and sorting:
+   - In `LearnerController@index`:
+     - Loaded all courses for the filter dropdown.
+     - Used Eloquent's `with` to eager load each learner's enrolments and their related courses.
+     - Checked for a `course_id` query parameter to filter learners by course.
+     - Used `whereHas` to only include learners enrolled in the selected course.
+     - Checked for a `sort` query parameter to sort learners by progress (ascending or descending).
+     - If a course is selected, sorted by that course's progress; otherwise, sorted by the average progress across all courses for each learner.
+     - Passed the learners, courses, selected course, and sort order to the view.
+
+6. Enhanced the Blade view for UI and logic:
+   - Added a Bootstrap-styled form with:
+     - A dropdown to filter learners by course (auto-submits on change).
+     - A dropdown to sort learners by progress (auto-submits on change).
+     - An Apply button for manual submission.
+   - Displayed a Bootstrap table with columns for learner ID, full name, and enrolled courses.
+   - For each learner:
+     - Displayed their full name.
+     - Listed all enrolled courses (or only the selected course if filtered), showing the course name and progress percentage as a badge.
+     - If no courses are enrolled, displayed a muted message.
+   - If no learners are found, displayed a Bootstrap alert.
+   - Included Bootstrap CSS and JS via CDN for styling and interactivity.
+
+7. Added documentation and comments:
+   - Used Blade comments at the top of the view to describe the variables and their types.
+   - Added PHPDoc comments to controller and model methods for clarity and IDE support.
+
+8. Added modern styling:
+   - Created `public/css/university-table.css` for custom styling
+   - Implemented a modern color scheme using:
+     - Tuatara (#242423) for primary elements and table headers
+     - Mist Gray (#cccbc4) for secondary elements
+     - Gray (#8c8c8c) for neutral elements
+     - Boulder (#7c7c7c) for text and borders
+   - Added a consistent radial gradient background:
+     - Starting with Gold (#C69830)
+     - Transitioning to Tuatara with 57% opacity
+     - Fixed the background with `background-attachment: fixed` for consistent appearance
+   - Styled the table with:
+     - Modern border-radius and shadows
+     - Smooth hover transitions
+     - Gradient separators between rows
+     - Responsive padding and spacing
+   - Enhanced the UI components:
+     - Added hover effects to buttons and dropdowns
+     - Implemented consistent badge styling
+     - Added responsive adjustments for mobile devices
+     - Styled the pagination controls to match the theme
+   - Added the Valenture Institute logo:
+     - White SVG version in the header
+     - Dark background container for contrast
+     - Proper sizing and brightness adjustments
+
+9. Verified the implementation:
+   - Navigated to `/learner-progress` in the browser.
+   - Confirmed that learners, courses, and progress display correctly.
+   - Tested filtering by course and sorting by progress to ensure both features work together and independently.
+   - Ensured the UI is responsive and user-friendly with Bootstrap.
+   - Verified the styling consistency across different screen sizes.
